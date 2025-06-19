@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Digital - Restaurante Español</title>
+    <style>
+        :root {
+            --whatsapp-green: #075E54;
+            --whatsapp-light-green: #25D366;
+            --whatsapp-bg: #F0F2F5;
+            --whatsapp-white: #FFFFFF;
+            --whatsapp-text: #333333;
+            --whatsapp-gray: #ECE5DD;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--whatsapp-bg);
+            color: var(--whatsapp-text);
+            padding-bottom: 70px;
+        }
+        
+        .header {
+            background-color: var(--whatsapp-green);
+            color: white;
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--whatsapp-light-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .header-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+        
+        .category-tabs {
+            display: flex;
+            overflow-x: auto;
+            background-color: var(--whatsapp-white);
+            position: fixed;
+            top: 70px;
+            width: 100%;
+            z-index: 90;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .category-tab {
+            padding: 8px 15px;
+            margin: 0 5px;
+            white-space: nowrap;
+            border-radius: 20px;
+            background-color: var(--whatsapp-gray);
+            color: var(--whatsapp-text);
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .category-tab.active {
+            background-color: var(--whatsapp-light-green);
+            color: white;
+        }
+        
+        .menu-container {
+            margin-top: 120px;
+            padding: 15px;
+        }
+        
+        .category-section {
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: var(--whatsapp-green);
+            font-weight: 500;
+        }
+        
+        .product-card {
+            background-color: var(--whatsapp-white);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .product-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background-color: #ddd;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .image-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 14px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+        
+        .product-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .product-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .product-price {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--whatsapp-green);
+        }
+        
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+        }
+        
+        .quantity-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--whatsapp-light-green);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .quantity-value {
+            margin: 0 10px;
+            font-size: 16px;
+        }
+        
+        .checkout-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: var(--whatsapp-green);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+        }
+        
+        .checkout-btn {
+            background-color: var(--whatsapp-light-green);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 20px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .checkout-total {
+            font-weight: 500;
+        }
+        
+        .checkout-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--whatsapp-bg);
+            z-index: 200;
+            padding: 20px;
+            display: none;
+            overflow-y: auto;
+        }
+        
+        .checkout-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .checkout-title {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--whatsapp-green);
+        }
+        
+        .close-btn {
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .checkout-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .checkout-item-name {
+            flex-grow: 1;
+        }
+        
+        .checkout-item-price {
+            margin-left: 10px;
+        }
+        
+        .checkout-total-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--whatsapp-green);
+            font-weight: 500;
+            text-align: right;
+        }
+        
+        .confirm-btn {
+            background-color: var(--whatsapp-light-green);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 15px;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Cabecera estilo WhatsApp -->
+    <div class="header">
+        <div class="header-avatar">R</div>
+        <div class="header-title">Restaurante Español</div>
+    </div>
+    
+    <!-- Pestañas de categorías -->
+    <div class="category-tabs">
+        <div class="category-tab active" data-category="tapas">Tapas</div>
+        <div class="category-tab" data-category="ensaladas">Ensaladas</div>
+        <div class="category-tab" data-category="principales">Principales</div>
+        <div class="category-tab" data-category="paellas">Paellas</div>
+        <div class="category-tab" data-category="bebidas">Bebidas</div>
+    </div>
+    
+    <!-- Contenido del menú -->
+    <div class="menu-container">
+        <!-- Sección de Tapas -->
+        <div class="category-section" id="tapas">
+            <h2 class="category-title">Tapas y Entrantes</h2>
+            <div class="product-list">
+                <!-- Las tarjetas de productos se generarán con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Sección de Ensaladas -->
+        <div class="category-section" id="ensaladas">
+            <h2 class="category-title">Ensaladas</h2>
+            <div class="product-list">
+                <!-- Las tarjetas de productos se generarán con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Sección de Platos Principales -->
+        <div class="category-section" id="principales">
+            <h2 class="category-title">Platos Principales</h2>
+            <div class="product-list">
+                <!-- Las tarjetas de productos se generarán con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Sección de Paellas -->
+        <div class="category-section" id="paellas">
+            <h2 class="category-title">Paellas</h2>
+            <div class="product-list">
+                <!-- Las tarjetas de productos se generarán con JavaScript -->
+            </div>
+        </div>
+        
+        <!-- Sección de Bebidas -->
+        <div class="category-section" id="bebidas">
+            <h2 class="category-title">Bebidas</h2>
+            <div class="product-list">
+                <!-- Las tarjetas de productos se generarán con JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Barra de checkout -->
+    <div class="checkout-bar">
+        <div class="checkout-total">Total: 0.00€</div>
+        <button class="checkout-btn" id="open-checkout">Ver Pedido</button>
+    </div>
+    
+    <!-- Pantalla de checkout -->
+    <div class="checkout-screen" id="checkout-screen">
+        <div class="checkout-header">
+            <h2 class="checkout-title">Tu Pedido</h2>
+            <div class="close-btn" id="close-checkout">×</div>
+        </div>
+        
+        <div class="checkout-items" id="checkout-items">
+            <!-- Los items del pedido se generarán con JavaScript -->
+        </div>
+        
+        <div class="checkout-total-section">
+            Total: <span id="checkout-total">0.00</span>€
+        </div>
+        
+        <button class="confirm-btn" id="confirm-order">Completar Pedido</button>
+    </div>
+    
+    <script>
+        // --- Enviar parámetro session por POST si existe y obtener menú ---
+        let menuData = null;
+        (async function() {
+            function getSessionParam() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('session');
+            }
+            const session = getSessionParam();
+            console.log('🔍 Session parameter:', session);
+            
+            if (session) {
+                console.log('📡 Intentando obtener datos del servidor...');
+                try {
+                    const resp = await fetch('https://bot1.camarai.es/webhook-test/session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Access-Control-Allow-Origin': '*'
+                        },
+                        body: JSON.stringify({ session })
+                    });
+                    console.log('📡 Respuesta del servidor:', resp.status, resp.statusText);
+                    
+                    if (resp.ok) {
+                        const data = await resp.json();
+                        console.log('📦 Datos recibidos del servidor:', data);
+                        
+                        // El menú está en data.categorias (no data[0].categorias)
+                        menuData = {};
+                        const categorias = data.categorias;
+                        console.log('🏷️ Categorías encontradas:', Object.keys(categorias));
+                        
+                        for (const key in categorias) {
+                            if (key === 'otros') continue; // No mostrar 'otros'
+                            const cat = categorias[key];
+                            menuData[key] = cat.items.map(item => {
+                                console.log(`🍽️ Procesando item: ${item.nombre} - URL: ${item.url}`);
+                                return {
+                                    nombre: item.nombre,
+                                    precio: item.precio || '',
+                                    descripcion: '', // No hay descripción en el JSON recibido
+                                    url: item.url || null // Añadir la URL de la imagen
+                                };
+                            });
+                        }
+                        console.log('📋 Menú procesado:', menuData);
+                        
+                        // Pintar el menú
+                        generarMenu();
+                        // Mostrar solo la primera categoría al inicio
+                        document.querySelectorAll('.category-section').forEach(section => {
+                            section.style.display = 'none';
+                        });
+                        document.getElementById('tapas').style.display = 'block';
+                        return;
+                    } else {
+                        console.error('❌ Error en la respuesta del servidor:', resp.status, resp.statusText);
+                    }
+                } catch (e) {
+                    console.error('❌ Error al obtener datos del servidor:', e);
+                    // Si hay error, no hacemos nada especial
+                }
+            } else {
+                console.log('⚠️ No hay session parameter, usando menú por defecto');
+            }
+            
+            // Si no hay session o error, usar menú por defecto (opcional)
+            console.log('🔄 Usando menú por defecto...');
+            menuData = {
+                "bebidas": [
+                    { "nombre": "Aquarius Limón", "precio": "2.50€", "descripcion": "Refresco de limón refrescante", "url": null },
+                    { "nombre": "Botella de Vino (Ribera del Duero)", "precio": "16.00€", "descripcion": "Vino tinto de la región de Ribera del Duero", "url": null },
+                    { "nombre": "Botella de Vino (Rioja)", "precio": "15.00€", "descripcion": "Vino tinto de la región de Rioja", "url": null },
+                    { "nombre": "Coca-Cola", "precio": "2.50€", "descripcion": "Refresco de cola", "url": null },
+                    { "nombre": "Copa de Cerveza (San Miguel)", "precio": "2.20€", "descripcion": "Cerveza rubia española", "url": null },
+                    { "nombre": "Copa de Vino (de la casa)", "precio": "2.50€", "descripcion": "Vino tinto de la casa", "url": null },
+                    { "nombre": "Copa de Vino (Ribera del Duero)", "precio": "3.50€", "descripcion": "Vino tinto de calidad", "url": null },
+                    { "nombre": "Copa de Vino (Rioja)", "precio": "3.00€", "descripcion": "Vino tinto de Rioja", "url": null },
+                    { "nombre": "Fanta Limón", "precio": "2.50€", "descripcion": "Refresco de limón", "url": null },
+                    { "nombre": "Fanta Naranja", "precio": "2.50€", "descripcion": "Refresco de naranja", "url": null },
+                    { "nombre": "Jarra de Cerveza (San Miguel) 1,5 L", "precio": "7.50€", "descripcion": "Jarra grande de cerveza", "url": null },
+                    { "nombre": "Limonada Mediterránea", "precio": "5.50€", "descripcion": "Limonada natural con hierbas", "url": null },
+                    { "nombre": "Nestea", "precio": "2.50€", "descripcion": "Té frío con limón", "url": null },
+                    { "nombre": "Zumo de Granada", "precio": "4.00€", "descripcion": "Zumo natural de granada", "url": null }
+                ],
+                "tapas": [
+                    { "nombre": "Boquerones Fritos", "precio": "7.00€", "descripcion": "Boquerones frescos fritos en aceite de oliva", "url": null },
+                    { "nombre": "Croquetas de Jamón", "precio": "5.00€", "descripcion": "Croquetas cremosas de jamón ibérico", "url": null },
+                    { "nombre": "Pimientos de Padrón", "precio": "4.20€", "descripcion": "Pimientos verdes fritos con sal", "url": null },
+                    { "nombre": "Pulpo a la Gallega", "precio": "15.00€", "descripcion": "Pulpo cocido con patata y pimentón", "url": null },
+                    { "nombre": "Queso Manchego con Membrillo", "precio": "5.00€", "descripcion": "Queso manchego con dulce de membrillo", "url": null }
+                ],
+                "principales": [
+                    { "nombre": "Calamares a la Romana", "precio": "6.00€", "descripcion": "Calamares rebozados y fritos", "url": null },
+                    { "nombre": "Rabo de Toro", "precio": "13.00€", "descripcion": "Estofado de rabo de toro con verduras", "url": null },
+                    { "nombre": "Sardinas a la Plancha", "precio": "10.50€", "descripcion": "Sardinas frescas a la plancha con limón", "url": null },
+                    { "nombre": "Solomillo al Pedro Ximénez", "precio": "16.00€", "descripcion": "Solomillo con salsa de vino Pedro Ximénez", "url": null }
+                ],
+                "ensaladas": [
+                    { "nombre": "Ensalada de la Casa", "precio": "9.00€", "descripcion": "Lechuga, tomate, cebolla, atún y huevo", "url": null },
+                    { "nombre": "Ensalada Mediterránea", "precio": "6.00€", "descripcion": "Tomate, pepino, aceitunas y queso feta", "url": null }
+                ],
+                "paellas": [
+                    { "nombre": "Paella de Marisco (4P)", "precio": "30.00€", "descripcion": "Paella tradicional con marisco fresco", "url": null },
+                    { "nombre": "Paella Mixta (4P)", "precio": "28.00€", "descripcion": "Paella con marisco, pollo y conejo", "url": null }
+                ]
+            };
+            generarMenu();
+            document.querySelectorAll('.category-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById('tapas').style.display = 'block';
+        })();
+
+        // Objeto para almacenar el pedido
+        let pedido = {};
+        
+        // Generar las tarjetas de productos
+        function generarMenu() {
+            for (const categoria in menuData) {
+                const section = document.getElementById(categoria);
+                if (section) {
+                    const productList = section.querySelector('.product-list');
+                    productList.innerHTML = '';
+                    
+                    menuData[categoria].forEach(producto => {
+                        // Determinar la URL de la imagen
+                        let imageUrl = '';
+                        if (producto.url) {
+                            imageUrl = producto.url;
+                            console.log(`🖼️ Usando URL del JSON para ${producto.nombre}: ${imageUrl}`);
+                        } else {
+                            // Fallback a imagen aleatoria si no hay URL
+                            imageUrl = `https://source.unsplash.com/random/300x200/?${encodeURIComponent(producto.nombre)}`;
+                            console.log(`🎲 Usando imagen aleatoria para ${producto.nombre}: ${imageUrl}`);
+                        }
+                        
+                        const productCard = document.createElement('div');
+                        productCard.className = 'product-card';
+                        productCard.innerHTML = `
+                            <div class="product-image" style="background-image: url('${imageUrl}')" data-url="${imageUrl}">
+                                <div class="image-loading">Cargando...</div>
+                            </div>
+                            <h3 class="product-name">${producto.nombre}</h3>
+                            <p class="product-description">${producto.descripcion || ''}</p>
+                            <div class="product-footer">
+                                <div class="product-price">${producto.precio}</div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn minus" data-product="${producto.nombre}" data-price="${parseFloat(producto.precio)}">-</button>
+                                    <span class="quantity-value" id="qty-${producto.nombre}">0</span>
+                                    <button class="quantity-btn plus" data-product="${producto.nombre}" data-price="${parseFloat(producto.precio)}">+</button>
+                                </div>
+                            </div>
+                        `;
+                        productList.appendChild(productCard);
+                        
+                        // Verificar si la imagen se carga correctamente
+                        const imageElement = productCard.querySelector('.product-image');
+                        const loadingElement = productCard.querySelector('.image-loading');
+                        
+                        // Crear una imagen temporal para verificar si se carga
+                        const tempImg = new Image();
+                        tempImg.onload = function() {
+                            // La imagen se cargó correctamente
+                            if (loadingElement) {
+                                loadingElement.style.display = 'none';
+                            }
+                            console.log(`✅ Imagen cargada: ${producto.nombre} - ${imageUrl}`);
+                        };
+                        tempImg.onerror = function() {
+                            // Error al cargar la imagen
+                            console.error(`❌ Error cargando imagen: ${producto.nombre} - ${imageUrl}`);
+                            if (loadingElement) {
+                                loadingElement.textContent = 'Error al cargar imagen';
+                                loadingElement.style.color = '#ff4444';
+                            }
+                            // Cambiar a imagen por defecto
+                            imageElement.style.backgroundImage = `url('https://source.unsplash.com/random/300x200/?${encodeURIComponent(producto.nombre)}')`;
+                        };
+                        
+                        // Intentar cargar la imagen
+                        if (imageUrl) {
+                            tempImg.src = imageUrl;
+                        }
+                    });
+                }
+            }
+            // Añadir event listeners a los botones de cantidad
+            document.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = this.getAttribute('data-product');
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    const isPlus = this.classList.contains('plus');
+                    
+                    if (!pedido[product]) {
+                        pedido[product] = { cantidad: 0, precio: price };
+                    }
+                    
+                    if (isPlus) {
+                        pedido[product].cantidad++;
+                    } else if (pedido[product].cantidad > 0) {
+                        pedido[product].cantidad--;
+                    }
+                    
+                    document.getElementById(`qty-${product}`).textContent = pedido[product].cantidad;
+                    actualizarTotal();
+                });
+            });
+        }
+        
+        // Actualizar el total del pedido
+        function actualizarTotal() {
+            let total = 0;
+            
+            for (const product in pedido) {
+                total += pedido[product].cantidad * pedido[product].precio;
+            }
+            
+            document.querySelector('.checkout-total').textContent = `Total: ${total.toFixed(2)}€`;
+            document.getElementById('checkout-total').textContent = total.toFixed(2);
+        }
+        
+        // Mostrar/ocultar pantalla de checkout
+        document.getElementById('open-checkout').addEventListener('click', function() {
+            const checkoutScreen = document.getElementById('checkout-screen');
+            const checkoutItems = document.getElementById('checkout-items');
+            
+            checkoutItems.innerHTML = '';
+            
+            let hasItems = false;
+            
+            for (const product in pedido) {
+                if (pedido[product].cantidad > 0) {
+                    hasItems = true;
+                    const item = document.createElement('div');
+                    item.className = 'checkout-item';
+                    item.innerHTML = `
+                        <div class="checkout-item-name">${product}</div>
+                        <div class="quantity-controls">
+                            <button class="quantity-btn minus" data-product="${product}" data-price="${pedido[product].precio}">-</button>
+                            <span class="quantity-value">${pedido[product].cantidad}</span>
+                            <button class="quantity-btn plus" data-product="${product}" data-price="${pedido[product].precio}">+</button>
+                        </div>
+                        <div class="checkout-item-price">${(pedido[product].cantidad * pedido[product].precio).toFixed(2)}€</div>
+                    `;
+                    checkoutItems.appendChild(item);
+                }
+            }
+            
+            if (hasItems) {
+                checkoutScreen.style.display = 'block';
+            } else {
+                alert('Añade productos a tu pedido primero');
+            }
+            
+            // Añadir event listeners a los botones de cantidad en el checkout
+            checkoutItems.querySelectorAll('.quantity-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = this.getAttribute('data-product');
+                    const price = parseFloat(this.getAttribute('data-price'));
+                    const isPlus = this.classList.contains('plus');
+                    
+                    if (isPlus) {
+                        pedido[product].cantidad++;
+                    } else if (pedido[product].cantidad > 0) {
+                        pedido[product].cantidad--;
+                    }
+                    
+                    // Actualizar todas las vistas
+                    document.getElementById(`qty-${product}`).textContent = pedido[product].cantidad;
+                    actualizarTotal();
+                    
+                    // Volver a generar el checkout si es necesario
+                    if (pedido[product].cantidad === 0) {
+                        this.closest('.checkout-item').remove();
+                        if (document.querySelectorAll('.checkout-item').length === 0) {
+                            checkoutScreen.style.display = 'none';
+                        }
+                    } else {
+                        this.nextElementSibling.textContent = pedido[product].cantidad;
+                        this.closest('.checkout-item').querySelector('.checkout-item-price').textContent = 
+                            `${(pedido[product].cantidad * pedido[product].precio).toFixed(2)}€`;
+                    }
+                });
+            });
+        });
+        
+        document.getElementById('close-checkout').addEventListener('click', function() {
+            document.getElementById('checkout-screen').style.display = 'none';
+        });
+        
+        // Botón para completar pedido
+        document.getElementById('confirm-order').addEventListener('click', function() {
+            let mensaje = "Pedido:\n";
+            let total = 0;
+            
+            for (const product in pedido) {
+                if (pedido[product].cantidad > 0) {
+                    mensaje += `${product} x${pedido[product].cantidad} = ${(pedido[product].cantidad * pedido[product].precio).toFixed(2)}€\n`;
+                    total += pedido[product].cantidad * pedido[product].precio;
+                }
+            }
+            
+            mensaje += `\nTotal: ${total.toFixed(2)}€`;
+            
+            alert(mensaje);
+            document.getElementById('checkout-screen').style.display = 'none';
+            
+            // Aquí podrías enviar el pedido por WhatsApp
+            // window.open(`https://wa.me/?text=${encodeURIComponent(mensaje)}`);
+        });
+        
+        // Navegación por pestañas
+        document.querySelectorAll('.category-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.getAttribute('data-category');
+                document.querySelectorAll('.category-section').forEach(section => {
+                    section.style.display = 'none';
+                });
+                document.getElementById(category).style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
