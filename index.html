@@ -284,7 +284,6 @@
 <body>
     <!-- Cabecera estilo WhatsApp -->
     <div class="header">
-        <div class="header-avatar">R</div>
         <div class="header-title">Restaurante Español</div>
     </div>
     
@@ -436,65 +435,31 @@
                             section.style.display = 'none';
                         });
                         document.getElementById('tapas').style.display = 'block';
-                        return;
                     } else {
                         console.error('❌ Error en la respuesta del servidor:', resp.status, resp.statusText);
+                        mostrarMensajeError('Vuelve a escanear el QR');
                     }
                 } catch (e) {
                     console.error('❌ Error al obtener datos del servidor:', e);
-                    // Si hay error, no hacemos nada especial
+                    mostrarMensajeError('Vuelve a escanear el QR');
                 }
             } else {
-                console.log('⚠️ No hay session parameter, usando menú por defecto');
+                console.log('⚠️ No hay session parameter');
+                mostrarMensajeError('Vuelve a escanear el QR');
             }
-            
-            // Si no hay session o error, usar menú por defecto (opcional)
-            console.log('🔄 Usando menú por defecto...');
-            menuData = {
-                "bebidas": [
-                    { "nombre": "Aquarius Limón", "precio": "2.50€", "descripcion": "Refresco de limón refrescante", "url": null },
-                    { "nombre": "Botella de Vino (Ribera del Duero)", "precio": "16.00€", "descripcion": "Vino tinto de la región de Ribera del Duero", "url": null },
-                    { "nombre": "Botella de Vino (Rioja)", "precio": "15.00€", "descripcion": "Vino tinto de la región de Rioja", "url": null },
-                    { "nombre": "Coca-Cola", "precio": "2.50€", "descripcion": "Refresco de cola", "url": null },
-                    { "nombre": "Copa de Cerveza (San Miguel)", "precio": "2.20€", "descripcion": "Cerveza rubia española", "url": null },
-                    { "nombre": "Copa de Vino (de la casa)", "precio": "2.50€", "descripcion": "Vino tinto de la casa", "url": null },
-                    { "nombre": "Copa de Vino (Ribera del Duero)", "precio": "3.50€", "descripcion": "Vino tinto de calidad", "url": null },
-                    { "nombre": "Copa de Vino (Rioja)", "precio": "3.00€", "descripcion": "Vino tinto de Rioja", "url": null },
-                    { "nombre": "Fanta Limón", "precio": "2.50€", "descripcion": "Refresco de limón", "url": null },
-                    { "nombre": "Fanta Naranja", "precio": "2.50€", "descripcion": "Refresco de naranja", "url": null },
-                    { "nombre": "Jarra de Cerveza (San Miguel) 1,5 L", "precio": "7.50€", "descripcion": "Jarra grande de cerveza", "url": null },
-                    { "nombre": "Limonada Mediterránea", "precio": "5.50€", "descripcion": "Limonada natural con hierbas", "url": null },
-                    { "nombre": "Nestea", "precio": "2.50€", "descripcion": "Té frío con limón", "url": null },
-                    { "nombre": "Zumo de Granada", "precio": "4.00€", "descripcion": "Zumo natural de granada", "url": null }
-                ],
-                "tapas": [
-                    { "nombre": "Boquerones Fritos", "precio": "7.00€", "descripcion": "Boquerones frescos fritos en aceite de oliva", "url": null },
-                    { "nombre": "Croquetas de Jamón", "precio": "5.00€", "descripcion": "Croquetas cremosas de jamón ibérico", "url": null },
-                    { "nombre": "Pimientos de Padrón", "precio": "4.20€", "descripcion": "Pimientos verdes fritos con sal", "url": null },
-                    { "nombre": "Pulpo a la Gallega", "precio": "15.00€", "descripcion": "Pulpo cocido con patata y pimentón", "url": null },
-                    { "nombre": "Queso Manchego con Membrillo", "precio": "5.00€", "descripcion": "Queso manchego con dulce de membrillo", "url": null }
-                ],
-                "principales": [
-                    { "nombre": "Calamares a la Romana", "precio": "6.00€", "descripcion": "Calamares rebozados y fritos", "url": null },
-                    { "nombre": "Rabo de Toro", "precio": "13.00€", "descripcion": "Estofado de rabo de toro con verduras", "url": null },
-                    { "nombre": "Sardinas a la Plancha", "precio": "10.50€", "descripcion": "Sardinas frescas a la plancha con limón", "url": null },
-                    { "nombre": "Solomillo al Pedro Ximénez", "precio": "16.00€", "descripcion": "Solomillo con salsa de vino Pedro Ximénez", "url": null }
-                ],
-                "ensaladas": [
-                    { "nombre": "Ensalada de la Casa", "precio": "9.00€", "descripcion": "Lechuga, tomate, cebolla, atún y huevo", "url": null },
-                    { "nombre": "Ensalada Mediterránea", "precio": "6.00€", "descripcion": "Tomate, pepino, aceitunas y queso feta", "url": null }
-                ],
-                "paellas": [
-                    { "nombre": "Paella de Marisco (4P)", "precio": "30.00€", "descripcion": "Paella tradicional con marisco fresco", "url": null },
-                    { "nombre": "Paella Mixta (4P)", "precio": "28.00€", "descripcion": "Paella con marisco, pollo y conejo", "url": null }
-                ]
-            };
-            generarMenu();
-            document.querySelectorAll('.category-section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById('tapas').style.display = 'block';
         })();
+        
+        // Función para mostrar mensaje de error
+        function mostrarMensajeError(mensaje) {
+            const menuContainer = document.querySelector('.menu-container');
+            menuContainer.innerHTML = `
+                <div style="text-align: center; padding: 50px 20px; color: #666;">
+                    <h2 style="color: #ff4444; margin-bottom: 20px;">⚠️ Error</h2>
+                    <p style="font-size: 16px; margin-bottom: 10px;">${mensaje}</p>
+                    <p style="font-size: 14px; color: #999;">Verifica que el QR sea válido y esté actualizado</p>
+                </div>
+            `;
+        }
 
         // Objeto para almacenar el pedido
         let pedido = {};
