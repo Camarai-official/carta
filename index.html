@@ -372,8 +372,25 @@
                 const params = new URLSearchParams(window.location.search);
                 return params.get('session');
             }
+            
+            function getNameParam() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('name');
+            }
+            
             const session = getSessionParam();
+            const name = getNameParam();
             console.log('🔍 Session parameter:', session);
+            console.log('🔍 Name parameter:', name);
+            
+            // Actualizar el título del header si se proporciona el parámetro name
+            if (name) {
+                const headerTitle = document.querySelector('.header-title');
+                if (headerTitle) {
+                    headerTitle.textContent = name;
+                    console.log('📝 Título del header actualizado a:', name);
+                }
+            }
             
             if (session) {
                 console.log('📡 Intentando obtener datos del servidor...');
